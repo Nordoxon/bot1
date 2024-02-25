@@ -10,15 +10,23 @@ def greet_user(update, context):
     print("Вызван /start")
     update.message.reply_text('Привет, пользователь! Ты вызвал команду /start')
 
+current_date = datetime.date.today().isoformat()
+planet_dict = {'mars': ephem.Mars(current_date), 'venus': ephem.Venus(current_date), 'saturn': ephem.Saturn(current_date), 'jupiter': ephem.Jupiter(current_date),
+               'neptune': ephem.Neptune(current_date), 'uranus': ephem.Uranus(current_date), 'mercury': ephem.Mercury(current_date), 'pluto': ephem.Pluto(current_date)}
+
 def planet_ephem(update, context):
-    user_text = update.message.text
-    planet_name = user_text.split()
-    current_date = datetime.date.today().isoformat()
-    new_planet = ephem.planet_name[2](current_date)
-    try:
-        update.message.reply_text(new_planet)
-    except:
-        update.message.reply_text('Введите название реальной планеты на английском с помощью команды /planet "название планеты"')
+    user_text_lower = update.message.text.lower()
+    user_text_splitted = user_text_lower.split()
+    user_text_sliced = user_text_splitted[1:]
+    for item_user_text_sliced in user_text_sliced:
+        if item_user_text_sliced in planet_dict:
+            planet_output = item_user_text_sliced
+            planet_name = planet_dict.get(item_user_text_sliced)
+            const = ephem.constellation(planet_name)
+            update.message.reply_text(f"{planet_output} : {const}")
+        else:
+            update.message.reply_text('Название планеты отсутствует. Введите название реальной планеты на английском с помощью команды /planet "название планеты"')
+
 
 
 
